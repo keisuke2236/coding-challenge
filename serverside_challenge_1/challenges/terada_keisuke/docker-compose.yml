@@ -1,0 +1,33 @@
+version: "3.9"
+
+volumes:
+  mysql:
+
+services:
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: ''
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/myapp
+    environment:
+      RAILS_ENV: development
+      RAILS_LOG_TO_STDOUT: 'true'
+      RAILS_SERVE_STATIC_FILES: 'true'
+      MYSQL_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ""
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
